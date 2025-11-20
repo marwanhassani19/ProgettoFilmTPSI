@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ricerca Film - OMDb API</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <h1>🎬 Ricerca Film</h1>
+        <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="Cerca un film...">
+            <button id="searchBtn">🔍 Cerca</button>
+        </div>
+    </header>
+
+    <main>
+        <div id="results" class="results-grid"></div>
+
+        <div id="pagination" class="pagination hidden">
+            <button id="prevBtn">⬅️ Indietro</button>
+            <span id="pageInfo"></span>
+            <button id="nextBtn">➡️ Avanti</button>
+        </div>
+
+        <div id="movieDetails" class="movie-details hidden"></div>
+    </main>
+
+    <footer>
+        <button id="scrollTop" class="scroll-btn">⬆️ Su</button>
+        <button id="scrollBottom" class="scroll-btn">⬇️ Giù</button>
+        <p>Powered by <a href="https://www.omdbapi.com/" target="_blank">OMDb API</a></p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
