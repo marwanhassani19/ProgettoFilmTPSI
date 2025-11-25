@@ -45,119 +45,131 @@ h1 {
     background-color: #2ea043;
 }
 
-.results-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 20px;
+.section {
     padding: 20px;
 }
 
+.section h2 {
+    color: #58a6ff;
+    margin-bottom: 10px;
+}
+
+.movie-row-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.movie-row {
+    display: flex;
+    overflow-x: hidden; /* barra di scorrimento nascosta */
+    gap: 15px;
+    scroll-behavior: smooth;
+    padding: 10px 0;
+    flex-grow: 1;
+}
+
 .movie-card {
-    background-color: #161b22;
+    min-width: 180px;
     border-radius: 8px;
     overflow: hidden;
     cursor: pointer;
-    transition: transform 0.2s;
+    transition: transform 0.3s, box-shadow 0.3s;
+    background-color: #161b22;
+    flex-shrink: 0;
 }
 
 .movie-card:hover {
     transform: scale(1.05);
+    box-shadow: 0 0 15px #58a6ff80;
 }
 
 .movie-card img {
     width: 100%;
     height: 270px;
     object-fit: cover;
+    display: block;
 }
 
 .movie-card h3 {
     text-align: center;
-    padding: 10px;
+    padding: 10px 5px;
     font-size: 1rem;
 }
 
-.pagination {
-    display: flex;
+/* Overlay dettagli film nascosto inizialmente */
+#movieOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
     justify-content: center;
     align-items: center;
-    margin: 20px;
-    gap: 10px;
+    z-index: 100;
+    background: rgba(0,0,0,0.85);
 }
 
-.pagination button {
-    background-color: #30363d;
-    border: none;
-    padding: 10px 20px;
+#movieOverlay.active {
+    display: flex;
+}
+
+.overlay-content {
+    max-width: 900px;
+    width: 90%;
     color: white;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-.pagination button:hover {
-    background-color: #484f58;
-}
-
-.movie-details {
-    background-color: #161b22;
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    background: rgba(13,17,23,0.95);
     padding: 20px;
-    margin: 20px;
     border-radius: 10px;
-    text-align: left;
 }
 
-.movie-details img {
+.overlay-content img {
     max-width: 250px;
     border-radius: 8px;
-    display: block;
-    margin-bottom: 20px;
 }
 
-.movie-details h2 {
+.overlay-content h2 {
     color: #58a6ff;
 }
 
-.back-btn {
-    display: inline-block;
-    margin-top: 20px;
-    background-color: #30363d;
+/* Frecce scroll orizzontale */
+.scroll-left, .scroll-right {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: #30363d88;
     border: none;
     color: white;
-    padding: 10px 20px;
-    border-radius: 5px;
+    padding: 10px;
+    border-radius: 50%;
     cursor: pointer;
+    z-index: 10;
 }
 
-.back-btn:hover {
-    background-color: #484f58;
+.scroll-left { left: 0; }
+.scroll-right { right: 0; }
+
+.scroll-left:hover, .scroll-right:hover {
+    background-color: #484f5888;
 }
 
+/* Frecce su/giù */
 .scroll-btn {
     position: fixed;
     right: 20px;
-    background-color: #30363d;
+    background-color: #30363d88;
     color: white;
     border: none;
-    padding: 10px;
+    padding: 12px;
     border-radius: 50%;
     cursor: pointer;
     margin: 5px;
 }
 
-#scrollTop {
-    bottom: 70px;
-}
-
-#scrollBottom {
-    bottom: 20px;
-}
-
-footer {
-    text-align: center;
-    padding: 20px;
-    background-color: #161b22;
-    color: #8b949e;
-}
-
-.hidden {
-    display: none;
+.scroll-btn:hover {
+    background-color: #484f5888;
 }
