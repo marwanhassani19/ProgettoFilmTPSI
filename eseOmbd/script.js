@@ -1,105 +1,138 @@
 const API_KEY = "ab98d384";
-let currentPage = 1;
-let currentQuery = "";
 
-// ELEMENTI
-const resultsDiv = document.getElementById("results");
-const detailsDiv = document.getElementById("movieDetails");
-const paginationDiv = document.getElementById("pagination");
-const pageInfo = document.getElementById("pageInfo");
+const searchInput = document.getElementById("searchInput");
+const searchBtn = document.getElementById("searchBtn");
+const featuredMovies = document.getElementById("featuredMovies");
+const categoriesSection = document.getElementById("categories");
+const overlay = document.getElementById("movieOverlay");
+const overlayContent = document.getElementById("overlayContent");
 
-// 🔍 Cerca film
-document.getElementById("searchBtn").addEventListener("click", () => {
-    const query = document.getElementById("searchInput").value.trim();
-    if (query) {
-        currentQuery = query;
-        currentPage = 1;
-        searchMovies(query, currentPage);
-    } else {
-        alert("Inserisci un titolo da cercare!");
+// SCROLL VERTICALE
+document.getElementById("scrollTop").addEventListener("click", () => window.scrollTo({top:0, behavior:"smooth"}));
+document.getElementById("scrollBottom").addEventListener("click", () => window.scrollTo({top:document.body.scrollHeight, behavior:"smooth"}));
+
+// CHIUDI OVERLAY CLICCANDO FUORI DAL CONTENUTO
+overlay.addEventListener("click", (e) => {
+    if(e.target === overlay){
+        overlay.classList.remove("active");
     }
 });
 
-// ▶️ Navigazione
-document.getElementById("nextBtn").addEventListener("click", () => {
-    currentPage++;
-    searchMovies(currentQuery, currentPage);
+// CERCA FILM
+searchBtn.addEventListener("click", () => {
+    const query = searchInput.value.trim();
+    if(query) searchMovies(query);
 });
 
-document.getElementById("prevBtn").addEventListener("click", () => {
-    if (currentPage > 1) {
-        currentPage--;
-        searchMovies(currentQuery, currentPage);
-    }
-});
-
-// 🔝 Scroll su / giù
-document.getElementById("scrollTop").addEventListener("click", () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-});
-
-document.getElementById("scrollBottom").addEventListener("click", () => {
-    window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
-});
-
-// 📡 Funzione ricerca film
-async function searchMovies(query, page) {
-    const url = `https://www.omdbapi.com/?apikey=${API_KEY}&s=${encodeURIComponent(query)}&page=${page}`;
-    const res = await fetch(url);
-    const data = await res.json();
-
-    detailsDiv.classList.add("hidden");
-    resultsDiv.innerHTML = "";
-
-    if (data.Response === "True") {
-        paginationDiv.classList.remove("hidden");
-
-        data.Search.forEach(movie => {
-            const card = document.createElement("div");
-            card.className = "movie-card";
-            card.innerHTML = `
-                <img src="${movie.Poster !== "N/A" ? movie.Poster : 'https://via.placeholder.com/200x300?text=No+Image'}" alt="${movie.Title}">
-                <h3>${movie.Title} (${movie.Year})</h3>
-            `;
-            card.addEventListener("click", () => showDetails(movie.imdbID));
-            resultsDiv.appendChild(card);
-        });
-        pageInfo.textContent = `Pagina ${page}`;
-    } else {
-        resultsDiv.innerHTML = `<p>Nessun risultato trovato per "${query}"</p>`;
-        paginationDiv.classList.add("hidden");
-    }
+// CREA CARD FILM
+function createMovieCard(movie){
+    const card = document.createElement("div");
+    card.className = "movie-card";
+    card.innerHTML = `<img src="${movie.Poster !== "N/A" ? movie.Poster : 'https://via.placeholder.com/200x300'}" alt="${movie.Title}">
+                      <h3>${movie.Title}</h3>`;
+    card.addEventListener("click", () => showDetails(movie.imdbID));
+    return card;
 }
 
-// 🎬 Mostra dettagli film
-async function showDetails(id) {
-    const url = `https://www.omdbapi.com/?apikey=${API_KEY}&i=${id}&plot=full`;
-    const res = await fetch(url);
+// MOSTRA DETTAGLI FILM
+async function showDetails(id){
+    const res = await fetch(`https://www.omdbapi.com/?apikey=${API_KEY}&i=${id}&plot=full`);
     const movie = await res.json();
-
-    // Nasconde i risultati e la paginazione
-    resultsDiv.classList.add("hidden");
-    paginationDiv.classList.add("hidden");
-
-    detailsDiv.classList.remove("hidden");
-    detailsDiv.innerHTML = `
-        <img src="${movie.Poster !== "N/A" ? movie.Poster : 'https://via.placeholder.com/200x300?text=No+Image'}" alt="${movie.Title}">
-        <h2>${movie.Title} (${movie.Year})</h2>
-        <p><strong>Genere:</strong> ${movie.Genre}</p>
-        <p><strong>Regista:</strong> ${movie.Director}</p>
-        <p><strong>Attori:</strong> ${movie.Actors}</p>
-        <p><strong>Trama:</strong> ${movie.Plot}</p>
-        <p><strong>Valutazione IMDb:</strong> ⭐ ${movie.imdbRating}</p>
-        <button class="back-btn" id="backToResults">⬅️ Torna ai risultati</button>
+    overlayContent.innerHTML = `
+        <img src="${movie.Poster !== "N/A" ? movie.Poster : 'https://via.placeholder.com/200x300'}" alt="${movie.Title}">
+        <div>
+            <h2>${movie.Title} (${movie.Year})</h2>
+            <p><strong>Genere:</strong> ${movie.Genre}</p>
+            <p><strong>Regista:</strong> ${movie.Director}</p>
+            <p><strong>Attori:</strong> ${movie.Actors}</p>
+            <p><strong>Trama:</strong> ${movie.Plot}</p>
+            <p><strong>IMDb:</strong> ⭐ ${movie.imdbRating}</p>
+        </div>
     `;
-
-    document.getElementById("backToResults").addEventListener("click", () => {
-        detailsDiv.classList.add("hidden");
-        resultsDiv.classList.remove("hidden");
-        paginationDiv.classList.remove("hidden");
-        window.scrollTo({ top: 0, behavior: "smooth" });
-    });
-
-    window.scrollTo({ top: detailsDiv.offsetTop, behavior: "smooth" });
+    overlay.classList.add("active");
 }
 
+// FUNZIONE SCROLL ORIZZONTALE
+function addScrollButtons(rowWrapper, row){
+    const btnLeft = rowWrapper.querySelector(".scroll-left");
+    const btnRight = rowWrapper.querySelector(".scroll-right");
+    btnLeft.onclick = () => row.scrollBy({left:-300, behavior:"smooth"});
+    btnRight.onclick = () => row.scrollBy({left:300, behavior:"smooth"});
+}
+
+// CERCA FILM
+async function searchMovies(query){
+    const res = await fetch(`https://www.omdbapi.com/?apikey=${API_KEY}&s=${encodeURIComponent(query)}&type=movie`);
+    const data = await res.json();
+    if(data.Response === "True"){
+        categoriesSection.innerHTML = `<h2>Risultati ricerca: ${query}</h2>`;
+        const rowWrapper = document.createElement("div");
+        rowWrapper.className = "movie-row-wrapper";
+        const row = document.createElement("div");
+        row.className = "movie-row";
+        data.Search.forEach(movie => row.appendChild(createMovieCard(movie)));
+
+        const btnLeft = document.createElement("button");
+        btnLeft.className = "scroll-left";
+        btnLeft.innerHTML = "&#10094;";
+        const btnRight = document.createElement("button");
+        btnRight.className = "scroll-right";
+        btnRight.innerHTML = "&#10095;";
+
+        rowWrapper.appendChild(btnLeft);
+        rowWrapper.appendChild(row);
+        rowWrapper.appendChild(btnRight);
+        categoriesSection.appendChild(rowWrapper);
+
+        addScrollButtons(rowWrapper,row);
+    } else {
+        alert("Nessun risultato trovato!");
+    }
+}
+
+// CARICA FILM CONSIGLIATI
+async function loadFeatured(){
+    const featuredIds = ["tt7286456","tt10954600","tt6751668","tt4154796","tt2488496"];
+    featuredIds.forEach(async id => {
+        const res = await fetch(`https://www.omdbapi.com/?apikey=${API_KEY}&i=${id}`);
+        const movie = await res.json();
+        featuredMovies.appendChild(createMovieCard(movie));
+    });
+}
+
+// CARICA CATEGORIE
+async function loadCategories(){
+    const categories = ["Action","Comedy","Horror","Sci-Fi"];
+    for(const cat of categories){
+        const res = await fetch(`https://www.omdbapi.com/?apikey=${API_KEY}&s=${cat}&type=movie`);
+        const data = await res.json();
+        if(data.Response === "True"){
+            const section = document.createElement("div");
+            section.innerHTML = `<h2>${cat}</h2>`;
+            const rowWrapper = document.createElement("div");
+            rowWrapper.className = "movie-row-wrapper";
+            const row = document.createElement("div");
+            row.className = "movie-row";
+            data.Search.slice(0,12).forEach(movie => row.appendChild(createMovieCard(movie)));
+
+            const btnLeft = document.createElement("button");
+            btnLeft.className = "scroll-left";
+            btnLeft.innerHTML = "&#10094;";
+            const btnRight = document.createElement("button");
+            btnRight.className = "scroll-right";
+            btnRight.innerHTML = "&#10095;";
+
+            rowWrapper.appendChild(btnLeft);
+            rowWrapper.appendChild(row);
+            rowWrapper.appendChild(btnRight);
+            section.appendChild(rowWrapper);
+            categoriesSection.appendChild(section);
+
+            addScrollButtons(rowWrapper,row);
+        }
+    }
+}
+
+// INIT
+loadFeatured();
+loadCategories();
