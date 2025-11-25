@@ -3,37 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ricerca Film - OMDb API</title>
+    <title>FilmHub - Consigliati & Categorie</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <header>
-        <h1>🎬 Ricerca Film</h1>
-        <div class="search-bar">
-            <input type="text" id="searchInput" placeholder="Cerca un film...">
-            <button id="searchBtn">🔍 Cerca</button>
+<header>
+    <h1>🎬 FilmHub</h1>
+    <div class="search-bar">
+        <input type="text" id="searchInput" placeholder="Cerca un film...">
+        <button id="searchBtn">🔍</button>
+    </div>
+</header>
+
+<main>
+    <!-- Sezione consigliati -->
+    <section class="section" id="featured">
+        <h2>Consigliati del momento</h2>
+        <div class="movie-row-wrapper">
+            <button class="scroll-left">&#10094;</button>
+            <div class="movie-row" id="featuredMovies"></div>
+            <button class="scroll-right">&#10095;</button>
         </div>
-    </header>
+    </section>
 
-    <main>
-        <div id="results" class="results-grid"></div>
+    <!-- Sezioni categorie -->
+    <section class="section" id="categories"></section>
 
-        <div id="pagination" class="pagination hidden">
-            <button id="prevBtn">⬅️ Indietro</button>
-            <span id="pageInfo"></span>
-            <button id="nextBtn">➡️ Avanti</button>
-        </div>
+    <!-- Overlay dettagli film -->
+    <div id="movieOverlay" class="hidden">
+        <div class="overlay-content" id="overlayContent"></div>
+    </div>
+</main>
 
-        <div id="movieDetails" class="movie-details hidden"></div>
-    </main>
+<footer>
+    <button id="scrollTop" class="scroll-btn">⬆️</button>
+    <button id="scrollBottom" class="scroll-btn">⬇️</button>
+    <p>Powered by <a href="https://www.omdbapi.com/" target="_blank">OMDb API</a></p>
+</footer>
 
-    <footer>
-        <button id="scrollTop" class="scroll-btn">⬆️ Su</button>
-        <button id="scrollBottom" class="scroll-btn">⬇️ Giù</button>
-        <p>Powered by <a href="https://www.omdbapi.com/" target="_blank">OMDb API</a></p>
-    </footer>
-
-    <script src="script.js"></script>
+<script src="script.js"></script>
 </body>
 </html>
